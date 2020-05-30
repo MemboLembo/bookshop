@@ -1,25 +1,46 @@
+/* eslint-disable no-case-declarations */
 const initialState = {
   books: [],
   loading: true,
   error: null,
-  cartItems: [
-    {
-      id: 1,
-      name: 'book 1',
-      count: 3,
-      price: 150,
-    },
-    {
-      id: 2,
-      name: 'book 2',
-      count: 5,
-      price: 150,
-    },
-  ],
+  cartItems: [],
   orderTotal: 220,
 };
 
+const updateCartItems = (cartItems, item, idx) => {
+  if (idx === -1) {
+    return [
+      ...cartItems,
+      item,
+    ];
+  }
+
+  return [
+    ...cartItems.slice(0, idx),
+    item,
+    ...cartItems.slice(idx + 1),
+  ];
+};
+
+const updateCartItem = (book, item = {}) => {
+  const {
+    id = book.id,
+    count = 0,
+    title = book.title,
+    price = 0,
+  } = item;
+
+  return {
+    id,
+    title,
+    count: count + 1,
+    price: price + book.price,
+  };
+};
+
 const reducer = (state = initialState, action) => {
+  console.log(action.type);
+
   switch (action.type) {
     case 'FETCH_BOOKS_REQUEST':
       return {
@@ -43,6 +64,18 @@ const reducer = (state = initialState, action) => {
         books: [],
         loading: false,
         error: action.payload,
+      };
+
+    case 'BOOK_ADDED_TO_CART':
+      const bookId = action.payload;
+      const book = state.books.find((bookData) => bookData.id === bookId);
+      const itemIndex = state.cartItems.findIndex(({ id }) => id === bookId);
+      const item = state.cartItems[itemIndex];
+
+      const newItem = updateCartItem(book, item);
+      return {
+        ...state,
+        cartItems: updateCartItems(state.cartItems, newItem, itemIndex),
       };
 
     default:
