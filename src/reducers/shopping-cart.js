@@ -1,4 +1,8 @@
 /* eslint-disable no-case-declarations */
+const updateOrderTotal = (orderTotal, book, quantity) => {
+  return orderTotal + book.price * quantity;
+};
+
 const updateCartItems = (cartItems, item, idx) => {
   if (item.count === 0) {
     return [
@@ -38,7 +42,7 @@ const updateCartItem = (book, item = {}, quantity) => {
 };
 
 const updateOrder = (state, bookId, quantity) => {
-  const { bookList: { books }, shoppingCart: { cartItems } } = state;
+  const { bookList: { books }, shoppingCart: { cartItems, orderTotal } } = state;
 
   const book = books.find(({ id }) => id === bookId);
   const itemIndex = cartItems.findIndex(({ id }) => id === bookId);
@@ -46,7 +50,7 @@ const updateOrder = (state, bookId, quantity) => {
 
   const newItem = updateCartItem(book, item, quantity);
   return {
-    orderTotal: 0,
+    orderTotal: updateOrderTotal(orderTotal, book, quantity),
     cartItems: updateCartItems(cartItems, newItem, itemIndex),
   };
 };
