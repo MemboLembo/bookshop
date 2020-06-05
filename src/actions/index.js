@@ -39,8 +39,16 @@ const allBooksRemovedFromCart = (bookId) => {
   };
 };
 
+// without thunk
+// const fetchBooks = (bookstoreService, dispatch) => () => {
+//   dispatch(booksRequested());
+//   bookstoreService.getBooks()
+//     .then((data) => dispatch(booksLoaded(data)))
+//     .catch((err) => dispatch(booksError(err)));
+// };
 
-const fetchBooks = (bookstoreService, dispatch) => () => {
+// thunk
+const fetchBooks = (bookstoreService) => () => (dispatch) => {
   dispatch(booksRequested());
   bookstoreService.getBooks()
     .then((data) => dispatch(booksLoaded(data)))

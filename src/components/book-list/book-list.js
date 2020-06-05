@@ -1,6 +1,7 @@
 /* eslint-disable no-shadow */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import BookListItem from '../book-list-item';
 import { withBookstoreService } from '../hoc';
 import { fetchBooks, bookAddedToCart } from '../../actions';
@@ -54,10 +55,21 @@ const mapStateToProps = ({ bookList: { books, loading, error } }) => {
   return { books, loading, error };
 };
 
+// without thunk
+// const mapDispatchToProps = (dispatch, { bookstoreService }) => {
+//   return {
+//     fetchBooks: fetchBooks(bookstoreService, dispatch),
+//     onAddedToCart: (id) => dispatch(bookAddedToCart(id)),
+//   };
+// };
+
+// thunk
 const mapDispatchToProps = (dispatch, { bookstoreService }) => {
   return {
-    fetchBooks: fetchBooks(bookstoreService, dispatch),
-    onAddedToCart: (id) => dispatch(bookAddedToCart(id)),
+    ...bindActionCreators({
+      fetchBooks: fetchBooks(bookstoreService),
+      onAddedToCart: bookAddedToCart,
+    }, dispatch),
   };
 };
 
